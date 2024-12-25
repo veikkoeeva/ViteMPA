@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Test page</title>
+	<link rel="stylesheet" href="base.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="manifest" href="manifest.json">
+
+	<!-- This is not updated with the hashed version. -->
+	<link rel="icon" type="image/svg+xml" sizes="any" href="images/logo.svg">
+
+	<style>
+	</style>
+</head>
+	<main>
+		<p>Hello, Vite world!</p>
+
+		<!-- After 'npm run vite-build' this page is not found anymore when opening index.html in the result ./dist directory. -->
+		<a href="another-page.html">Another page</a>
+
+	<script type="module">
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register(new URL('service-worker.js', import.meta.url), {
+				updateViaCache: 'none', type: 'module'
+			});
+		}
+	</script>
+
+	<!-- The image assets here are not updated with the hashed versions. -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "Organization",
+		"@id": "https://test.com",
+		"name": "Test place",
+		"logo": "https://test.com/logo.svg",
+	}
+</script>
+</body>
+
+</html>

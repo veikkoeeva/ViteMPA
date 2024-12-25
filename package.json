@@ -1,0 +1,30 @@
+{
+	"name": "test-website-com",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "Test web site",
+	"browserslist": "> 0.5%, last 2 versions, not dead",
+	"private": true,
+	"scripts": {
+		"vite-dev": "vite serve public --host localhost --logLevel info --debug",
+		"vite-build": "vite build public --logLevel info --outDir ../dist --config vite.config.js",
+		"vite-preview": "vite preview public --logLevel info --outDir ../dist --base ./ --config vite.config.js",
+		"cloudflare-dev-dist": "wrangler dev",
+		"cloudflare-deploy": "wrangler deploy"
+	},
+	"devDependencies": {
+		"@cloudflare/kv-asset-handler": "0.3.4",
+		"@cloudflare/vitest-pool-workers": "^0.5.2",
+		"@cloudflare/workers-types": "^4.20241018.0",
+		"@web/rollup-plugin-copy": "^0.5.1",
+		"@web/rollup-plugin-html": "^2.3.0",
+		"vitest": "2.1.8",
+		"vite": "6.0.5",
+		"rollup": "^4.19.1",
+		"rollup-plugin-copy": "^3.5.0",
+		"rollup-plugin-replace": "^2.2.0",
+		"rollup-plugin-summary": "^2.0.1",
+		"typescript": "5.7.2",
+		"wrangler": "3.99.0"
+	}
+}
