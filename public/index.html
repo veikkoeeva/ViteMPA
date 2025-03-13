@@ -3,8 +3,9 @@
 
 <head>
 	<meta charset="UTF-8">
+	<base href="./">
 	<title>Test page</title>
-	<link rel="stylesheet" href="base.css">
+	<link rel="stylesheet" href="./base.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<link rel="manifest" href="manifest.json">
@@ -15,11 +16,13 @@
 	<style>
 	</style>
 </head>
-	<main>
-		<p>Hello, Vite world!</p>
+<main>
+	<p>Hello, Vite world!</p>
 
-		<!-- After 'npm run vite-build' this page is not found anymore when opening index.html in the result ./dist directory. -->
-		<a href="another-page.html">Another page</a>
+	<!-- After 'npm run vite-build' this page is not found anymore when opening index.html in the result ./dist directory. -->
+	<a href="another-page.html">Another page</a>
+	<script type="module" src="index.ts"></script>
+
 
 	<script type="module">
 		if ('serviceWorker' in navigator) {
@@ -39,6 +42,6 @@
 		"logo": "https://test.com/logo.svg",
 	}
 </script>
-</body>
+	</body>
 
 </html>
