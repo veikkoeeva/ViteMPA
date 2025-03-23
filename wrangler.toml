@@ -1,0 +1,6 @@
+name = "vite-mpa-worker"
+compatibility_date = "2025-03-23"
+main = "./cloudflare/index.ts"
+compatibility_flags = [ "nodejs_compat", "nodejs_compat_v2" ]
+
+assets = { binding = "ASSETS", directory = "./dist" }
