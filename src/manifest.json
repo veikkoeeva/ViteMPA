@@ -1,0 +1,18 @@
+{
+  "name": "Test site",
+  "short_name": "Test site",
+  "theme_color": "#4FFAFF",
+  "background_color": "#4FFAFF",
+  "display": "standalone",
+  "start_url": "/",
+  "lang": "en",
+  "description": "Test site.",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "images/logo.svg",
+      "sizes": "24x24 48x48 50x50 88x88 300x300 620x300 1240x600",
+      "type": "image/svg+xml"
+    }
+  ]
+}
