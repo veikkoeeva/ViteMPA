@@ -1,0 +1,47 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true,
+		"worker": true,
+		"serviceworker": true
+  },
+  "globals": {
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "style": "warn",
+    "pedantic": "off",
+    "restriction": "warn"
+  },
+  "rules": {
+    "eqeqeq": "error",
+    "no-unused-vars": "warn",
+    "no-undef": "error",
+		"yoda": "off",
+		"no-ternary": "off",
+		"sort-keys": "off",
+		"max-params": "off",
+		"no-continue":"allow",
+		"no-plusplus": "off",
+		"no-magic-numbers": "off",
+		"no-duplicate-imports": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-unused-vars": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/*.spec.ts"],
+      "env": {
+      },
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "warn"
+      }
+    }
+  ],
+  "ignorePatterns": ["dist/**/*", "build/**/*", "node_modules/**/*"]
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<base href="/">
+	<title>Anotest test page</title>
+	<link rel="stylesheet" href="/base.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="manifest" href="manifest.json">
+	<meta property="og:image" content="https://test.com/images/facebook-banner-example.jpg" />
+	<link rel="icon" type="image/svg+xml" sizes="any" href="images/logo.svg">
+
+	<style>
+	</style>
+</head>
+	<main>
+		<p>This is another page!</p>
+		<a href="index.html">Index</a>
+
+		<script type="module">
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', async () => {
+					try {
+						await navigator.serviceWorker.register('/service-worker.js', {
+							type: 'module',
+							updateViaCache: 'none'
+						});
+					} catch (_) {}
+				});
+			}
+		</script>
+
+
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "Organization",
+		"@id": "https://test.com",
+		"name": "Test place"
+	}
+</script>
+</body>
+
+</html>

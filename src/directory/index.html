@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<base href="/">
+	<title>Test page</title>
+	<link rel="stylesheet" href="/base.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="manifest" href="/manifest.json">
+
+	<meta property="og:url"                content="https://test.com/" />
+	<meta property="og:type"               content="article" />
+	<meta property="og:title"              content="Test image stuff." />
+	<meta property="og:description"        content="Test image description." />
+	<meta property="og:image"              content="https://test.com/images/facebook-banner-example.jpg">
+
+	<!-- This is not updated with the hashed version. -->
+	<link rel="icon" type="image/svg+xml" sizes="any" href="/images/logo.svg">
+</head>
+	<main>
+		<p>Hello, Vite world!</p>
+		<a href="/index.html">Back to index!</a>
+
+
+		<picture>
+			<source media="(max-width: 799px)" srcset="/images/logo.svg" />
+			<source media="(min-width: 800px)" srcset="/images/logo.svg" />
+			<img src="/images/logo.svg" alt="Company Logo" />
+		</picture>
+
+		<img src="/images/vite.svg" alt="Vite Logo" />
+
+	</main>
+
+	<script type="module">
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', async () => {
+				try {
+					await navigator.serviceWorker.register('/service-worker.js', {
+						type: 'module',
+						updateViaCache: 'none'
+					});
+				} catch (_) {}
+			});
+		}
+	</script>
+
+	<!-- The image assets here are not updated with the hashed versions. -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "Organization",
+		"@id": "https://test.com/",
+		"name": "Test place",
+		"logo": "https://test.com/images/logo.svg",
+		"image": "https://test.com/images2/facebook-banner-example.jpg"
+	}
+</script>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+{
+  "name": "vite-mpa",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=23.11.0"
+  },
+  "scripts": {
+    "dev": "vite dev",
+    "build": "tsc && npm run build:sw && vite build",
+    "preview": "vite preview",
+    "eslint": "npx eslint",
+    "lint": "npx oxlint && npx eslint",
+    "oxlint": "npx oxlint",
+    "generate-cf-types": "npx wrangler types ./cloudflare/env.d.ts --config ./wrangler.jsonc",
+    "test": "vitest --config ./vitest.config.ts",
+    "integration-test": "vitest run --coverage --config ./vitest.config.browser.ts",
+    "test-coverage": "vitest --coverage --config ./vitest.config.ts",
+		"build:sw": "tsc --project sw/tsconfig.json --outDir public"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.0.1",
+    "@cloudflare/vitest-pool-workers": "^0.8.12",
+    "@cloudflare/workers-types": "^4.20250407.0",
+    "@eslint/css": "^0.6.0",
+    "@eslint/js": "^9.24.0",
+    "@types/glob": "^8.1.0",
+    "@types/wait-on": "^5.3.4",
+    "@vitest/browser": "^3.0.9",
+    "@vitest/coverage-v8": "^3.0.9",
+    "cheerio": "1.0.0",
+    "domhandler": "5.0.3",
+    "eslint": "^9.20.1",
+    "eslint-plugin-oxlint": "^0.16.5",
+    "get-port": "^7.1.0",
+    "glob": "^7.1.7",
+    "globals": "^16.0.0",
+    "jiti": "^2.4.2",
+    "oxlint": "^0.16.5",
+    "playwright": "^1.51.1",
+    "tree-kill": "^1.2.2",
+    "tsconfigurator": "^1.0.5",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.1",
+    "vite": "^6.2.5",
+    "vitest": "^3.0.9",
+    "wait-on": "^8.0.3",
+    "wrangler": "^4.8.0"
+  }
+}

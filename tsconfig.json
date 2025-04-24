@@ -1,0 +1,45 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"useDefineForClassFields": true,
+		"module": "ES2020",
+		"lib": [
+			"ESNext",
+			"DOM",
+			"DOM.Iterable"
+		],
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
+		"rewriteRelativeImportExtensions": true,
+		"verbatimModuleSyntax": true,
+		"erasableSyntaxOnly": true,
+		/* Bundler mode */
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"isolatedModules": true,
+		"moduleDetection": "force",
+		"noEmit": true,
+		/* Linting */
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedSideEffectImports": true,
+
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.worker.tsbuildinfo",
+    "types": [
+			"@cloudflare/workers-types/experimental",
+      "@cloudflare/vitest-pool-workers",
+			"@vitest/browser/providers/playwright",
+			"vite/client"
+		],
+	},
+	"include": [
+		"./post-build-assets-processor-plugin.ts",
+		"src/**/*.ts",
+		"test/**/*.ts",
+		"cloudflare/**/*.ts",
+		"cloudflare/**/*.d.ts",
+		"cloudflare/test-env.d.ts",
+	]
+}
