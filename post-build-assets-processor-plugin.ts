@@ -3,7 +3,7 @@ import type { Logger, Plugin, ResolvedConfig } from 'vite';
 import path, { resolve } from 'node:path';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import glob from 'glob';
+import { glob } from 'glob';
 
 
 /**

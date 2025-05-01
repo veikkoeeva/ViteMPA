@@ -1,0 +1,132 @@
+name: ViteMPA CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23.11.0
+          check-latest: true
+          cache: 'npm'
+
+      - name: Cache Vite and Vitest output
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.vite
+            .vite
+            .vitest
+          key: ${{ runner.os }}-vite-vitest-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vite-vitest-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/AppData/Local/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright (browsers)
+        run: npx playwright install --with-deps
+
+      - name: Run linter (non-blocking)
+        continue-on-error: true
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run unit tests
+        run: npm run test
+
+      - name: Run integration tests
+        run: npm run integration-test
+
+      - name: Summarize integration test coverage
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          echo "### 🧪 Integration Test Coverage" >> $GITHUB_STEP_SUMMARY
+
+          if [[ -f coverage-reports/lcov.info ]]; then
+            TOTAL=$(grep '^LF:' coverage-reports/lcov.info | cut -d: -f2 | paste -sd+ - | bc || echo 0)
+            COVERED=$(grep '^LH:' coverage-reports/lcov.info | cut -d: -f2 | paste -sd+ - | bc || echo 0)
+            PERCENT=$(awk "BEGIN { if ($TOTAL == 0) print \"0.00\"; else printf \"%.2f\", ($COVERED/$TOTAL)*100 }")
+            echo "\`${PERCENT}%\` lines covered (${COVERED}/${TOTAL})" >> $GITHUB_STEP_SUMMARY
+            echo "${PERCENT}" > /tmp/coverage_percent.txt
+            echo "${COVERED}" > /tmp/coverage_covered.txt
+            echo "${TOTAL}" > /tmp/coverage_total.txt
+          else
+            echo "_No coverage info found._" >> $GITHUB_STEP_SUMMARY
+          fi
+
+
+      - name: Post integration test coverage to PR
+        if: github.event_name == 'pull_request' && runner.os == 'Linux'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const lcov = fs.readFileSync('coverage-reports/lcov.info', 'utf8');
+            const lines = lcov.split('\n').filter(l => l.startsWith('LF:') || l.startsWith('LH:'));
+            const total = lines.reduce((acc, line) => {
+              const val = parseInt(line.split(':')[1], 10);
+              if (line.startsWith('LF:')) { acc.total += val; }
+              if (line.startsWith('LH:')) { acc.covered += val; }
+              return acc;
+            }, { total: 0, covered: 0 });
+            const percent = total.total ? ((total.covered / total.total) * 100).toFixed(2) : '0.00';
+
+            const marker = '<!-- integration-coverage-marker -->';
+            const body = `${marker}\n### 📊 Integration Test Coverage\n\n\`${percent}%\` lines covered (${total.covered}/${total.total})`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const existing = comments.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                comment_id: existing.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+               issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            }
+
+
