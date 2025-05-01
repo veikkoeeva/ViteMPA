@@ -6,7 +6,7 @@ export default defineWorkersProject(() => {
 		test: {
 			coverage: {
 				provider: 'v8',
-				reporter: ['text', 'json', 'html'],
+				reporter: ['text', 'lcov'],
 				reportsDirectory: './coverage-reports'
 			},
 			globals: false,

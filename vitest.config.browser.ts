@@ -50,6 +50,11 @@ export default defineConfig({
 
   //Vitest-specific configuration
   test: {
+		coverage: {
+			provider: 'v8',
+			reporter: ['text', 'lcov'],
+			reportsDirectory: './coverage-reports'
+		},
     environment: 'node',
     globalSetup: './test/browser-global-setup.ts',
     globals: false,
