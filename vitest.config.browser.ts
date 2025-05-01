@@ -5,12 +5,10 @@ class TestLogger implements Logger {
   private _hasWarned = false;
   private warnedMessages = new Set<string>();
 
-  // Required properties (not methods!)
-  get hasWarned(): boolean {
+    get hasWarned(): boolean {
     return this._hasWarned;
   }
 
-  // Methods
   info(msg: string, options?: { timestamp?: boolean }) {
     const ts = options?.timestamp ? `[${new Date().toISOString()}] ` : '';
     console.log(`[TEST INFO] ${ts}${msg}`);
@@ -43,12 +41,10 @@ class TestLogger implements Logger {
   }
 }
 
-// 2. Apply at Vite config level (not test level)
 export default defineConfig({
   customLogger: new TestLogger(),
   logLevel: 'info',
 
-  //Vitest-specific configuration
   test: {
 		coverage: {
 			provider: 'v8',
