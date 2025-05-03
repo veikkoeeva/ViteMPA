@@ -17,7 +17,7 @@
     "test": "vitest --config ./vitest.config.ts",
     "integration-test": "vitest run --coverage --config ./vitest.config.browser.ts",
     "test-coverage": "vitest --coverage --config ./vitest.config.ts",
-		"build:sw": "tsc --project sw/tsconfig.json --outDir public"
+		"build:sw": "tsc --project sw/tsconfig.json --outDir compiled-sw"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.0.13",
