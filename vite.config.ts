@@ -116,7 +116,7 @@ const config: UserConfig = {
 			rollupOptions: {
 				input: {
 					...rollupInput,
-					'service-worker': resolve(projectRoot, 'public/service-worker.js')
+					'service-worker': resolve(projectRoot, 'compiled-sw/service-worker.js')
 				},
 				output: {
 					entryFileNames: (chunkInfo) => {

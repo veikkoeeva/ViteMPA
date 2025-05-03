@@ -28,3 +28,6 @@ coverage
 
 #CloudFlare generated
 src/.wrangler
+
+#Build artifacts
+compiled-sw
