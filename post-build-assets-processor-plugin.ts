@@ -700,7 +700,7 @@ const updateHtmlFiles = (
 							key === 'image' ||
 							key === 'logo' ||
 							key === 'thumbnail' ||
-							key === 'url' ||  // Also check for 'url' fields which often contain image paths
+							key === 'url' ||  //Also check for 'url' fields which often contain image paths.
 							key.includes('Image') ||
 							key.includes('image')
 						)) {
