@@ -115,9 +115,19 @@ const config: UserConfig = {
 			cssCodeSplit: true,
 			rollupOptions: {
 				input: {
-					...htmlFiles,
 					...rollupInput,
 					'service-worker': resolve(projectRoot, 'public/service-worker.js')
+				},
+				output: {
+					entryFileNames: (chunkInfo) => {
+						//While the service-worker.js is optimized, its filename
+						//should be kept as-is.
+						return chunkInfo.name === 'service-worker'
+							? 'service-worker.js'
+							: `${assetConfig.assetsSubdir}/[name]-[hash].js`;
+					},
+					chunkFileNames: `${assetConfig.assetsSubdir}/[name]-[hash].js`,
+					assetFileNames: `${assetConfig.assetsSubdir}/[name]-[hash][extname]`
 				}
 			}
 		},
