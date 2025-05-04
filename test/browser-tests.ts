@@ -56,8 +56,8 @@ describe('Asset Hashing Tests', () => {
 
       logger.info(`Starting tests with base URL: ${baseUrl}.`);
       browser = await chromium.launch();
-
       logger.info('Browser launched successfully.');
+
     } catch (error) {
       logger.error('Failed to set up test environment.', {
         error: error instanceof Error ? error : new Error(String(error))
@@ -67,10 +67,26 @@ describe('Asset Hashing Tests', () => {
   });
 
   beforeEach(async () => {
-    if (browser) {
-      page = await browser.newPage();
-      logger.info('New page created for test.');
-    }
+		if (browser) {
+			page = await browser.newPage();
+			await page.evaluate(async () => {
+				if ('serviceWorker' in navigator) {
+					const registrations = await navigator.serviceWorker.getRegistrations();
+					for (const registration of registrations) {
+						await registration.unregister();
+						console.log('Unregistered service worker:', registration.scope);
+					}
+					return registrations.length;
+				}
+				return 0;
+			}).then(count => {
+				if (count > 0) {
+					logger.info(`Unregistered ${count} service worker(s).`);
+				}
+			});
+
+			logger.info('New page created for test.');
+		}
   });
 
   afterEach(async () => {
