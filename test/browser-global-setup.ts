@@ -78,15 +78,11 @@ export default async function setup(project: TestProject) {
       }
     });
 
-    viteServer.stdout?.on('data', (data) =>
-      logger.info(data.toString().trim()));
-    viteServer.stderr?.on('data', (data) =>
-      logger.error(data.toString().trim(), { error: new Error('Vite stderr') }));
+    viteServer.stdout?.on('data', (data) => logger.info(data.toString().trim()));
+    viteServer.stderr?.on('data', (data) => logger.error(data.toString().trim(), { error: new Error('Vite stderr') }));
+    viteServer.on('error', (err) => logger.error('Vite server error', { error: err }));
 
-    viteServer.on('error', (err) =>
-      logger.error('Vite server error', { error: err }));
-
-    if (!viteServer.pid) throw new Error('Vite server failed to launch');
+    if (!viteServer.pid) { throw new Error('Vite server failed to launch'); }
     logger.info(`Server running (PID: ${viteServer.pid})`);
 
     await waitOn({
@@ -99,7 +95,6 @@ export default async function setup(project: TestProject) {
       fs.writeFile(path.join(tempDir, 'cloudflare-port'), String(cloudflarePort))
     ]);
 
-    // Type-safe context provision
     type ProvidedContext = {
       vitePort: number;
       cloudflarePort: number;
@@ -149,7 +144,6 @@ export default async function setup(project: TestProject) {
   }
 }
 
-// Augment Vitest types for context provision
 declare module 'vitest' {
   export interface ProvidedContext {
     vitePort: number;
