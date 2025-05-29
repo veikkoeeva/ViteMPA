@@ -1,6 +1,8 @@
 {
   "recommendations": [
     "editorconfig.editorconfig",
-    "github.vscode-github-actions"
+    "github.vscode-github-actions",
+		"oxc.oxc-vscode",
+		"dbaeumer.vscode-eslint"
   ]
 }
