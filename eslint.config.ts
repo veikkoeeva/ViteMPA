@@ -1,20 +1,31 @@
+import compat from "eslint-plugin-compat";
 import css from "@eslint/css";
+import { defineConfig } from "eslint/config";
 import oxlint from 'eslint-plugin-oxlint';
-import tseslint from "typescript-eslint";
 
-export default tseslint.config(
-  //Oxlint for TypeScript and all that it supports.
-  ...oxlint.buildFromOxlintConfigFile('./.oxlintrc.json'),
-
-  //ESLint for CSS files.
-  {
-    files: ["**/*.css"],
-    plugins: {
-      css,
+export default defineConfig([
+	 {
+    files: ["src/**/*.js"],
+    plugins: { compat },
+		settings: {
+      browserslistOpts: {
+        env: "modern"
+      }
     },
-    language: "css/css",
     rules: {
-      "css/require-baseline": ["warn", { available: "widely" }],
+      semi: "error",
+      "compat/compat": "warn",
     },
-  }
-);
+  },
+	//ESLint for CSS files.
+	{
+		files: ["src/**/*.css"],
+		plugins: { css },
+		language: "css/css",
+		rules: {
+			"css/use-baseline": ["warn", { available: "widely" }],
+		}
+	},
+	//Oxlint for TypeScript and all that it supports.
+  ...oxlint.buildFromOxlintConfigFile('./.oxlintrc.json')
+]);

@@ -1,7 +1,4 @@
 /* Some comment. */
-& {
-
-	p {
+p {
 		background: red;
 	}
-}
