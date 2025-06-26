@@ -65,20 +65,15 @@ interface ManifestIcon {
 
 /**
  * Maps original asset paths to their hashed versions.
+ * key   = original asset path relative to source directory.
+ * value = hashed asset path relative to build directory.
  * @example
  * {
  *   "images/logo.svg": "assets/images/logo-DaG69vPR.svg", //Original path -> Hashed path.
  *   "styles/main.css": "assets/styles/main-AbC123de.css"
  * }
  */
-interface AssetMappings {
-	/**
-	 * Maps from original asset path to its hashed version.
-	 * @key Original asset path relative to source directory
-	 * @value Hashed asset path relative to build directory
-	 */
-	[originalPath: string]: string;
-}
+type AssetMappings = Record<string, string>;
 
 
 /**
@@ -189,63 +184,63 @@ const findUnreferencedAssets = (
 	srcDir: string,
 	baseUrl: string,
 	logger: Logger
-): { [key: string]: string } => {
+): Record<string, string> => {
 	const htmlFiles = glob.sync(`${srcDir}/**/*.html`);
-	const entries: { [key: string]: string } = {};
+	const entries: Record<string, string> = {};
 	const seen = new Set<string>();
 
 	htmlFiles.forEach(htmlFile => {
 		const content = fs.readFileSync(htmlFile, 'utf8');
-		const $ = cheerio.load(content);
+		const dom = cheerio.load(content);
 
 		//1) <meta property="og:image">,
 		//   <meta name="twitter:image">,
 		//   <meta name="twitter:player:stream">
-		$('meta[property^="og:image"], meta[name^="twitter:image"], meta[name^="twitter:player:stream"]')
-			.each((_, el) => {
-				const url = $(el).attr('content');
+		dom('meta[property^="og:image"], meta[name^="twitter:image"], meta[name^="twitter:player:stream"]')
+			.each((_i, el) => {
+				const url = dom(el).attr('content');
 				if (url) {
-					findAssetsInString(url, baseUrl, srcDir).forEach(a => {
-						logger.info(`Found asset in meta: ${a.originalPath}`, { timestamp: true });
-						if (!seen.has(a.originalPath)) {
-							entries[a.originalPath] = a.fullPath;
-							seen.add(a.originalPath);
+					findAssetsInString(url, baseUrl, srcDir).forEach(asset => {
+						logger.info(`Found asset in meta: ${asset.originalPath}`, { timestamp: true });
+						if (!seen.has(asset.originalPath)) {
+							entries[asset.originalPath] = asset.fullPath;
+							seen.add(asset.originalPath);
 						}
 					});
 				}
 			});
 
 		//2) <img src="...">.
-		$('img').each((_, el) => {
-			const url = $(el).attr('src');
+		dom('img').each((_i, el) => {
+			const url = dom(el).attr('src');
 			if (url) {
-				findAssetsInString(url, baseUrl, srcDir).forEach(a => {
-					if (!seen.has(a.originalPath)) {
-						entries[a.originalPath] = a.fullPath;
-						seen.add(a.originalPath);
+				findAssetsInString(url, baseUrl, srcDir).forEach(asset => {
+					if (!seen.has(asset.originalPath)) {
+						entries[asset.originalPath] = asset.fullPath;
+						seen.add(asset.originalPath);
 					}
 				});
 			}
 		});
 
 		//3) JSON-LD scripts.
-		$('script[type="application/ld+json"]').each((_, el) => {
-			const scriptContent = $(el).html();
+		dom('script[type="application/ld+json"]').each((_i, el) => {
+			const scriptContent = dom(el).html();
 			if (scriptContent) {
 				try {
 					const json = JSON.parse(scriptContent);
-					findAssetsInJson(json, baseUrl, srcDir).forEach(a => {
-						if (!seen.has(a.originalPath)) {
-							entries[a.originalPath] = a.fullPath;
-							seen.add(a.originalPath);
+					findAssetsInJson(json, baseUrl, srcDir).forEach(asset => {
+						if (!seen.has(asset.originalPath)) {
+							entries[asset.originalPath] = asset.fullPath;
+							seen.add(asset.originalPath);
 						}
 					});
 				} catch {
 					//If not valid JSON, treat as string
-					findAssetsInString(scriptContent, baseUrl, srcDir).forEach(a => {
-						if (!seen.has(a.originalPath)) {
-							entries[a.originalPath] = a.fullPath;
-							seen.add(a.originalPath);
+					findAssetsInString(scriptContent, baseUrl, srcDir).forEach(asset => {
+						if (!seen.has(asset.originalPath)) {
+							entries[asset.originalPath] = asset.fullPath;
+							seen.add(asset.originalPath);
 						}
 					});
 				}
@@ -257,15 +252,15 @@ const findUnreferencedAssets = (
 	const manifestPath = path.join(srcDir, 'manifest.json');
 	if (fs.existsSync(manifestPath)) {
 		const mf = fs.readFileSync(manifestPath, 'utf8');
-		findAssetsInJsonOrString(mf, baseUrl, srcDir).forEach(a => {
-			if (!seen.has(a.originalPath)) {
-				entries[a.originalPath] = a.fullPath;
-				seen.add(a.originalPath);
+		findAssetsInJsonOrString(mf, baseUrl, srcDir).forEach(asset => {
+			if (!seen.has(asset.originalPath)) {
+				entries[asset.originalPath] = asset.fullPath;
+				seen.add(asset.originalPath);
 			}
 		});
 	}
 
-	logger.info(`🔑 entries: ${Object.keys(entries).sort().join(', ')}`);
+	logger.info(`Entries: ${Object.keys(entries).sort().join(', ')}`);
 
 	return entries;
 };
@@ -323,9 +318,9 @@ const processMissingAssets = (
         const parsedAsset = path.parse(missingAsset);
         const dirname = parsedAsset.dir;
         const basename = parsedAsset.name;
-        const ext = parsedAsset.ext;
+        const { ext } = parsedAsset;
 
-        //.Create target directory in assets folder (if not already present).
+        //Create target directory in assets folder (if not already present).
         const assetDir = dirname ? `${dirname}` : '';
         const targetDir = path.join(assetsDir, assetDir);
 
@@ -451,9 +446,8 @@ const processManifestUrls = (obj: unknown, assetConfig: AssetConfig, assetMappin
 	if (!obj || typeof obj !== 'object') {
 		return false;
 	}
-
 	let changed = false;
-	const typedObj = obj as { [key: string]: unknown };
+	const typedObj = obj as Record<string, unknown>;
 
 	Object.keys(typedObj).forEach(key => {
 		if (key !== 'icons' && typeof typedObj[key] === 'string') {
@@ -559,8 +553,8 @@ const updateManifestFile = (manifestPath: string,	assetConfig: AssetConfig,	asse
 
 			return true;
 		}
-	} catch (e) {
-		logger.error(`Failed to update manifest.json: ${e}`, {
+	} catch (ex) {
+		logger.error(`Failed to update manifest.json: ${ex}`, {
 			timestamp: true
 		});
 	}
@@ -618,29 +612,35 @@ const updateHtmlFiles = (
 		});
 
 		const content = fs.readFileSync(htmlFile, 'utf-8');
-		const $ = cheerio.load(content);
+		const dom = cheerio.load(content); // ← renamed from $
+
 		let fileChanged = false;
 		let changesCount = 0;
 
 		//Update manifest link.
-		$('link[rel="manifest"]').each((_, el) => {
-			const $el = $(el);
-			const href = $el.attr('href');
+		dom('link[rel="manifest"]').each((_i, element) => {
+			const el = dom(element); // ← no longer "$el", but clear and valid
+			const href = el.attr('href');
+
 			if (href && href.endsWith('manifest.json')) {
 				//Find the hashed manifest file...
 				const manifestFiles = glob.sync(`${baseDir}/**/manifest-*.json`);
 				if (manifestFiles.length > 0) {
-					const relativeManifestPath = path.relative(baseDir, manifestFiles[0]).replace(/\\/g, '/');
-					$el.attr('href', `/${relativeManifestPath}`);
+					const relativeManifestPath = path
+						.relative(baseDir, manifestFiles[0])
+						.replace(/\\/g, '/');
+
+					el.attr('href', `/${relativeManifestPath}`);
 					fileChanged = true;
 					changesCount++;
 				}
 			}
 		});
 
+
 		//Update elements with src, href, or content attributes.
-		$('[src],[href],[content]').each((_, el) => {
-			const $el = $(el);
+		dom('[src],[href],[content]').each((_i, el) => {
+			const $el = dom(el);
 			const nodeName = el.tagName.toLowerCase();
 
 			['src', 'href', 'content', 'srcset'].forEach(attr => {
@@ -655,7 +655,8 @@ const updateHtmlFiles = (
 					if (attr === 'srcset') {
 						const srcsets = value.split(',').map(srcset => {
 							const [url, descriptor] = srcset.trim().split(/\s+/);
-							return `${updateUrl(url, assetConfig, assetMappings)}${descriptor ? ' ' + descriptor : ''}`;
+							return descriptor ? `${updateUrl(url, assetConfig, assetMappings)} ${descriptor}` : `${updateUrl(url, assetConfig, assetMappings)}`;
+
 						});
 
 						const newSrcset = srcsets.join(', ');
@@ -679,8 +680,8 @@ const updateHtmlFiles = (
 
 		//Update JSON-LD scripts.
 		let jsonChangesCount = 0;
-		$('script[type="application/ld+json"]').each((_, el) => {
-			const script = $(el);
+		dom('script[type="application/ld+json"]').each((_i, el) => {
+			const script = dom(el);
 			let scriptContent = script.html() || '';
 			try {
 				const jsonContent = JSON.parse(scriptContent);
@@ -692,11 +693,12 @@ const updateHtmlFiles = (
 						return;
 					}
 
-					const typedObj = obj as { [key: string]: unknown };
-
+					const typedObj = obj as Record<string, unknown>;
 					Object.entries(typedObj).forEach(([key, value]) => {
+
 						//Check for direct image URLs in common image fields...
-						if (typeof value === 'string' && (
+						if (typeof value === 'string' &&
+						(
 							key === 'image' ||
 							key === 'logo' ||
 							key === 'thumbnail' ||
@@ -710,9 +712,7 @@ const updateHtmlFiles = (
 
 						//Handle nested objects that might contain image URLs...
 						else if (value && typeof value === 'object') {
-							const isImageObject = (v: object): v is { url: string } => {
-								return 'url' in v && typeof (v as { url: unknown }).url === 'string';
-							};
+							const isImageObject = (value: unknown): value is { url: string } => typeof value === 'object' && value !== null && 'url' in value && typeof (value as Record<'url', unknown>).url === 'string';
 
 							//Special case for image-like objects with url property...
 							if (
@@ -770,7 +770,7 @@ const updateHtmlFiles = (
 
 		//Only write the file if changes were made.
 		if (fileChanged) {
-			fs.writeFileSync(htmlFile, $.html());
+			fs.writeFileSync(htmlFile, dom.html());
 			updatedFiles.push(relativePath);
 			logger.info(`Updated ${relativePath} with ${changesCount} changes`, {
 				timestamp: true
@@ -808,9 +808,8 @@ const PostBuildAssetsProcessorPlugin  = (options: {
     throw new Error('PostBuildAssetsProcessorPlugin: assetConfig is required');
   }
 
-	const assetConfig = options.assetConfig;
+	const { assetConfig } = options;
 	const root = options?.projectRoot || process.cwd();
-
 	let resolvedConfig: ResolvedConfig = null as unknown as ResolvedConfig;
 
 	return {
@@ -820,17 +819,15 @@ const PostBuildAssetsProcessorPlugin  = (options: {
 			resolvedConfig = config;
     },
 		closeBundle() {
-      const logger = resolvedConfig.logger;
+      const { logger } = resolvedConfig;
       const distDir = resolve(root, assetConfig.outputDir);
-      const clientDir = resolve(distDir, 'client');
+      const clientDir = resolve(distDir, '');
 
-      // Now you can use logger and config
       logger.info(`Processing asset mappings for build...`, {
         timestamp: true,
         clear: true
       });
 
-			// Skip for Cloudflare builds
 			if (resolvedConfig.build.ssr && process.env.CLOUDFLARE_BUILD === 'true') {
 				return;
 			}
