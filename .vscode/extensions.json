@@ -3,6 +3,8 @@
     "editorconfig.editorconfig",
     "github.vscode-github-actions",
 		"oxc.oxc-vscode",
-		"dbaeumer.vscode-eslint"
+		"dbaeumer.vscode-eslint",
+		"firefox-devtools.vscode-firefox-debug",
+		"ms-vscode.js-debug"
   ]
 }
