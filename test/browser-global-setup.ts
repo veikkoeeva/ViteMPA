@@ -139,7 +139,7 @@ export default async function setup(project: TestProject) {
     };
   } catch (err) {
     logger.error('Setup failed', { error: err as Error });
-    if (viteServer?.pid) treeKill(viteServer.pid, 'SIGKILL');
+    if (viteServer?.pid) { treeKill(viteServer.pid, 'SIGKILL'); }
     throw err;
   }
 }

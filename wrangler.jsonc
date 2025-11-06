@@ -9,7 +9,7 @@
     ],
   "workers_dev": false,
 	"assets": {
-    "directory": "./dist/client",
+    "directory": "./dist",
     "binding": "ASSETS"
   }
 }
