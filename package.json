@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"engines": {
-		"node": ">=25.1.0"
+		"node": ">=25.2.1"
 	},
 	"scripts": {
 		"dev": "vite dev",
@@ -32,12 +32,12 @@
 		]
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "^1.13.19",
-		"@cloudflare/vitest-pool-workers": "^0.10.4",
-		"@cloudflare/workers-types": "^4.20251014.0",
+		"@cloudflare/vite-plugin": "^1.17.0",
+		"@cloudflare/vitest-pool-workers": "^0.10.14",
+		"@cloudflare/workers-types": "^4.20251205.0",
 		"@eslint/css": "^0.14.1",
 		"@eslint/js": "^9.39.1",
-		"@html-eslint/eslint-plugin": "^0.47.1",
+		"@html-eslint/eslint-plugin": "^0.50.0",
 		"@types/glob": "^9.0.0",
 		"@types/wait-on": "^5.3.4",
 		"@vitest/browser": "^3.2.4",
@@ -46,22 +46,22 @@
 		"cheerio": "1.1.2",
 		"eslint": "^9.39.1",
 		"eslint-plugin-compat": "^6.0.2",
-		"eslint-plugin-oxlint": "^1.25.0",
+		"eslint-plugin-oxlint": "^1.31.0",
 		"get-port": "^7.1.0",
-		"glob": "^11.0.3",
+		"glob": "^13.0.0",
 		"globals": "^16.5.0",
 		"jiti": "^2.6.1",
 		"npm-check-updates": "^19.1.2",
-		"oxlint": "^1.25.0",
-		"playwright": "^1.56.1",
+		"oxlint": "^1.31.0",
+		"playwright": "^1.57.0",
 		"rollup": "^4.52.5",
 		"tree-kill": "^1.2.2",
 		"tsconfigurator": "^2.0.0",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.46.3",
+		"typescript-eslint": "^8.48.1",
 		"vite": "npm:rolldown-vite@latest",
 		"vitest": "^3.2.4",
-		"wait-on": "^9.0.1",
-		"wrangler": "^4.45.4"
+		"wait-on": "^9.0.3",
+		"wrangler": "^4.53.0"
 	}
 }
